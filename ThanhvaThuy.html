@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>365 Days Together - Thành & Thuỳ Anh</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            overflow-x: hidden; 
+            background-color: #ffe4e1; 
+            font-family: 'Quicksand', sans-serif; 
+            scroll-behavior: smooth; 
+        }
+
+        h1, h2, h3 { font-family: 'Dancing Script', cursive; }
+        
+        section { 
+            min-height: 100vh; width: 100%; display: none; 
+            flex-direction: column; align-items: center; justify-content: center; 
+            text-align: center; padding: 50px 20px; position: relative; z-index: 1; 
+        }
+
+        .active { display: flex; animation: fadeIn 0.8s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Nút bấm */
+        .btn-group { display: flex; gap: 15px; margin-top: 30px; justify-content: center; flex-wrap: wrap; z-index: 20;}
+        button { 
+            padding: 12px 35px; border: none; border-radius: 50px; 
+            cursor: pointer; font-weight: 600; transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15); font-size: 1rem;
+            z-index: 10; position: relative; background: white; color: #333;
+        }
+        button:hover { transform: scale(1.05); }
+
+        /* --- TRANG 1 --- */
+        #trang-dau { background: linear-gradient(to bottom, #fff0f5, #ffe4e1); color: #db7093; }
+        .main-img { 
+            width: 250px; height: 250px; object-fit: cover; 
+            border-radius: 50%; border: 8px solid white; 
+            margin: 20px; box-shadow: 0 10px 25px rgba(219, 112, 147, 0.3); background: #fff;
+        }
+
+        /* --- TRANG 2: KỶ NIỆM --- */
+        #trang-ky-niem { 
+            background: repeating-linear-gradient(
+                90deg, #001f3f 0px, #001f3f 40px, #003366 80px, #001f3f 120px
+            );
+        }
+
+        /* ĐÃ SỬA: Tiêu đề lớn và Nhạc nền thành màu Be */
+        #trang-ky-niem h1, #trang-ky-niem p {
+            color: #F0EAD6; 
+        }
+        
+        .gallery { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; max-width: 1200px; width: 100%; margin-top: 30px; }
+
+        /* CARD THUMBNAIL (Khung nhỏ) */
+        .memory-card { 
+            background: #F0EAD6; /* Màu be */
+            padding: 10px; border-radius: 15px; cursor: pointer; transition: 0.3s; 
+            border: 2px solid #db7093; /* Viền hồng */
+            display: flex; flex-direction: column; align-items: center;
+            flex-basis: 300px; flex-grow: 0; flex-shrink: 1; max-width: 350px; 
+            color: #333; 
+        }
+        .memory-card:hover { transform: translateY(-5px); background: #FFF8E7; border-color: #C71585;}
+
+        .collage-grid {
+            width: 100%; height: 250px; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 60% 40%;
+            gap: 5px; border-radius: 10px; overflow: hidden; background: #000;
+        }
+        .img-large { grid-column: 1 / 3; width: 100%; height: 100%; object-fit: cover; }
+        .img-small { width: 100%; height: 100%; object-fit: cover; }
+        .note-content { display: none; }
+        
+        /* ĐÃ SỬA: Tiêu đề ảnh màu vàng + bóng đen để dễ đọc trên nền be */
+        .card-title { 
+            margin-top: 10px; 
+            color: #ffeb3b; /* Màu vàng */
+            font-weight: bold; font-size: 1.1em; 
+            text-shadow: 1px 1px 2px #000; /* Bóng đen giúp chữ vàng nổi bật */
+        }
+
+        /* --- TRANG ALBUM --- */
+        #trang-album { background-color: #001f3f; overflow: hidden; }
+
+        .curtain-container {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 100; display: flex;
+        }
+        .curtain {
+            width: 50%; height: 100%;
+            background: repeating-linear-gradient(90deg, #001f3f 0px, #001f3f 40px, #003366 80px, #001f3f 120px);
+            transition: transform 2.5s cubic-bezier(0.25, 1, 0.5, 1); position: relative;
+        }
+        .curtain::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: repeating-linear-gradient(90deg, rgba(0,0,0,0.3) 0px, transparent 20px, rgba(255,255,255,0.05) 40px, transparent 60px, rgba(0,0,0,0.3) 80px);
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.8);
+        }
+        .curtain.left { transform: translateX(0); border-right: 2px solid rgba(0,0,0,0.5); }
+        .curtain.right { transform: translateX(0); border-left: 2px solid rgba(0,0,0,0.5); }
+        .curtain-open .curtain.left { transform: translateX(-100%); }
+        .curtain-open .curtain.right { transform: translateX(100%); }
+
+        .wood-board {
+            position: relative; background: #5d4037; 
+            background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 2px, transparent 2px, transparent 4px),
+                              linear-gradient(to bottom, #5d4037, #3e2723);
+            padding: 40px; border-radius: 10px; border: 8px solid #3e2723;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-width: 1200px; width: 95%; margin-top: 20px;
+        }
+        .wood-board::before {
+            content: ''; position: absolute; top: -10px; left: -10px; right: -10px; bottom: -10px;
+            border-radius: 15px; border: 2px dashed rgba(255, 215, 0, 0.3); pointer-events: none;
+        }
+        .lights-container { position: absolute; top: -15px; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 5; }
+        .light-bulb {
+            position: absolute; width: 12px; height: 12px; border-radius: 50%; background: #ffeb3b;
+            box-shadow: 0 0 10px #ffeb3b, 0 0 20px #ff9800; animation: twinkle 2s infinite alternate;
+        }
+        @keyframes twinkle { from { opacity: 0.5; transform: scale(0.9); } to { opacity: 1; transform: scale(1.2); } }
+
+        .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 20px; width: 100%; }
+
+        .film-frame {
+            background: #000; padding: 8px 8px 25px 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+            transition: transform 0.3s; position: relative; cursor: zoom-in;
+        }
+        .film-frame:hover { transform: scale(1.1) rotate(2deg); z-index: 10; }
+        .film-frame::before, .film-frame::after {
+            content: ''; position: absolute; height: 100%; width: 5px; top: 0;
+            background-image: radial-gradient(circle, white 2px, transparent 2.5px);
+            background-size: 10px 15px; opacity: 0.6;
+        }
+        .film-frame::before { left: 2px; } .film-frame::after { right: 2px; }
+        .film-frame img { width: 100%; height: 120px; object-fit: cover; border: 1px solid #333; }
+
+        /* --- MODAL (Khung phóng to) --- */
+        .modal {
+            display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; 
+            background-color: rgba(0,0,0,0.9); justify-content: center; align-items: center; backdrop-filter: blur(5px);
+        }
+        
+        /* ĐÃ SỬA: Modal nền màu Be */
+        .modal-content {
+            background: #F0EAD6; /* Màu be giống card */
+            border: 3px solid #db7093; /* Viền hồng */
+            box-shadow: 0 0 20px rgba(219, 112, 147, 0.5); 
+            border-radius: 15px;
+            width: 90%; max-width: 900px; max-height: 90vh; overflow-y: auto; position: relative;
+            animation: zoomIn 0.3s ease-out; 
+            color: #333; /* Chữ màu tối cho dễ đọc */
+            padding: 0; display: flex; flex-direction: row; 
+        }
+        @keyframes zoomIn { from {transform: scale(0.5); opacity: 0;} to {transform: scale(1); opacity: 1;} }
+        
+        .modal-body { display: flex; width: 100%; flex-wrap: wrap; }
+        
+        /* Sửa đường kẻ ngăn cách thành màu tối */
+        .modal-left { 
+            flex: 1.2; padding: 20px; 
+            border-right: 1px solid rgba(0,0,0,0.1); /* Đường kẻ tối */
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+        }
+        
+        .modal-left .collage-grid { height: 350px; border: 2px solid #db7093; }
+        
+        .modal-title-display { 
+            margin-top: 20px; font-size: 1.8em; 
+            color: #db7093; /* Tiêu đề trong modal màu hồng */
+            font-family: 'Dancing Script', cursive; text-align: center; 
+        }
+        
+        .modal-right { 
+            flex: 1; padding: 30px; display: flex; flex-direction: column; justify-content: center; 
+            background: rgba(0,0,0,0.03); /* Nền hơi tối nhẹ để tách biệt */
+        }
+        
+        .modal-note-display { 
+            font-size: 1.2em; line-height: 1.8; text-align: justify; 
+            color: #333; /* Chữ nội dung màu đen */
+            white-space: pre-wrap; 
+        }
+
+        /* Modal xem ảnh đơn (Trang Album) */
+        .modal.single-view .modal-right { display: none; }
+        .modal.single-view .modal-left { flex: 1; border: none; padding: 10px; background: transparent; }
+        .modal.single-view .modal-content { width: auto; max-width: 800px; background: transparent; border: none; box-shadow: none; }
+        .modal.single-view #modal-img-container { 
+            display: block; height: auto; border: 4px solid #fff; box-shadow: 0 0 30px rgba(0,0,0,0.8); background: #000; border-radius: 5px;
+        }
+        .single-img-display { max-height: 80vh; max-width: 100%; object-fit: contain; display: block; }
+        
+        /* Nút đóng modal */
+        .modal.single-view .close-btn { color: #fff; top: -40px; right: 0; font-size: 40px; background: none; }
+        
+        /* Sửa màu nút X thành màu tối cho modal nền be */
+        .close-btn { 
+            position: absolute; top: 10px; right: 15px; 
+            color: #555; /* Màu xám đen */
+            font-size: 30px; font-weight: bold; cursor: pointer; z-index: 10001; 
+        }
+        .close-btn:hover { color: #000; }
+
+        @media (max-width: 768px) {
+            .modal-content { flex-direction: column; width: 95%; margin: 10px; }
+            .modal-left { border-right: none; border-bottom: 1px solid rgba(0,0,0,0.1); padding: 15px; }
+            .modal-left .collage-grid { height: 250px; }
+            .modal-right { padding: 20px; }
+            .photo-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+            .film-frame img { height: 80px; }
+        }
+
+        /* --- TRANG 3: NHẮN NHỦ --- */
+        #trang-nhan-nhu { background-color: #f0faff; color: #2c3e50; }
+        .box { max-width: 600px; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); }
+        
+        /* --- TRANG 4: KẾT --- */
+        #trang-ket { 
+            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('trangket.jpg'); 
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #fff; 
+        }
+
+        .heart { 
+            position: fixed; top: -10px; color: #ff69b4; pointer-events: none; z-index: 9999; 
+            animation: fall linear infinite; text-shadow: 0 0 5px #fff;
+        }
+        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic" loop>
+        <source src="'một đời' - 14 Casper & Bon Nghiêm (feat. buitruonglinh) (Track 03 - Album 'SỐ KHÔNG') - (320 Kbps).mp3" type="audio/mpeg">
+        Trình duyệt của bạn không hỗ trợ phát nhạc.
+    </audio>
+
+    <section id="trang-dau" class="active">
+        <h1 style="font-size: 4em;">365 DAYS TOGETHER</h1>
+        <h3 style="font-size: 2em; margin-top: -10px; margin-bottom: 20px;">Đức Thành ♡ Thùy Anh</h3>
+        <img src="trangdau.jpg" class="main-img" alt="Ảnh bìa"> 
+        <p style="font-size: 1.3em; font-weight: bold;">18/02/2025 — 18/02/2026</p>
+        <button onclick="startJourney()" style="background-color: #db7093; color: white; margin-top: 30px;">
+            Bắt đầu chuyến đi thôi ❤️
+        </button>
+    </section>
+
+    <section id="trang-ky-niem">
+        <h1 style="font-size: 3em; margin-bottom: 10px;">Kỷ Niệm Của Chúng Mình</h1>
+        <p style="margin-bottom: 20px; font-style: italic; opacity: 0.8;">(Nhạc nền: 
+'một đời' - 14 Casper & Bon Nghiêm)</p>
+        
+        <div class="gallery">
+            <div class="memory-card" onclick="openModal(this)">
+                <div class="collage-grid">
+                    <img src="moiyeu1.jpg" class="img-large">
+                    <img src="moiyeu2.jpg" class="img-small">
+                    <img src="moiyeu3.jpg" class="img-small">
+                </div>
+                <p class="card-title">Những ngày tháng đầu tiên 💞</p>
+                <div class="note-content">Tại sao tôi lại không chụp hôm tỏ tình.... Dù ssao thì những ngày đầu còn mới lạ nhiểu cái con bỡ ngỡ như trai tân vậy, đơn thuần chỉ là tình yêu cấp 3 hồn nhiên, giản đơn, có khi chỉ là những hôm lai nhau đi học, những buổi hẹn sau giờ học ngắn ngủi hay chỉ là những lúc học bài cùng nhau như vậy là đủ hạnh phúc rồi. Vậy đó mà lại đáng yêu, đáng nhớ đến lạ kì.</div>
+            </div>
+             <div class="memory-card" onclick="openModal(this)">
+                <div class="collage-grid">
+                    <img src="onthi3.jpg" class="img-large">
+                    <img src="onthi2.jpg" class="img-small" style="object-position: top center;">
+                    <img src="onthi1.jpg" class="img-small" style="object-position: top center;">
+                </div>
+                <p class="card-title">Kì thi tốt nghiệp 📖</p>
+                <div class="note-content">Nỗi khổ của tình yêu cuối cấp là đây chứ đâu, học trên trường xong lại mỗi đứa học một nơi đến tối mới được call với nhau. Nhưng cũng nhiều cái vui, những buổi study date, những buổi tối call giảng bài với nhau, những buổi gặp nhau giữa các tiết học thêm tại trường tất cả càng làm thêm sự đáng quý cho thời học sinh của tụi mình.</div>
+            </div>
+             <div class="memory-card" onclick="openModal(this)">
+                <div class="collage-grid">
+                    <img src="muahe1.jpg" class="img-large" style="object-position: top center;">
+                    <img src="muahe2.jpg" class="img-small" style="object-position: 50% 20%;">
+                    <img src="muahe3.jpg" class="img-small">
+                </div>
+                <p class="card-title">Mùa hè đầu tiên ⛅️</p>
+                <div class="note-content">Mùa hè năm nay thật đặc biệt một phần vì mình vừa trải qua kì thi khó nhất 12 năm học sinh, lần đầu mình được đi nước ngoài và đặc biệt nhất là mùa hè đầu tiên mình có người yêu. Không còn là những buổi study date nữa mà là những buổi date thật sự, mua tặng cho người yêu những thứ mình muốn. Và đặc biệt là những buổi tập thể dục với nhau đưa nhau đi tập, đi bộ sáng sớm với nhau. Những điều giản đơn vậy thôi là đủ hạnh phúc rồi, được gặp nhau thôi là đủ vui cả một ngày dài.</div>
+            </div>
+             <div class="memory-card" onclick="openModal(this)">
+                <div class="collage-grid">
+                    <img src="sinhnhat1.jpg" class="img-large">
+                    <img src="sinhnhat3.jpg" class="img-small">
+                    <img src="sinhnhat2.jpg" class="img-small">
+                </div>
+                <p class="card-title">Kết thúc tuổi 17 🎂</p>
+                <div class="note-content">Vậy là đã đến lúc bước sang tuổi 18 rồi sao, đến lúc mình phải chịu trách nhiệm với lời nói và hành động của mình rồi. Đến lúc phải biết lo, biết suy nghĩ cho người yêu một cách trưởng thành hơn và cũng phải biết cân đối mọi thứ để tình yêu được trọn vẹn nhất. Chỉ là một buổi tối nhưng là cột mốc của nhiều thứ trong cuộc đời, có những thứ mình cần thay đổi và cũng như có những việc mình cần ghi nhớ.</div>
+            </div>
+             <div class="memory-card" onclick="openModal(this)">
+                <div class="collage-grid">
+                    <img src="daunam3.jpg" class="img-large" style="object-position: 50% 40%;">
+                    <img src="daunam2.jpg" class="img-small">
+                    <img src="daunam1.jpg" class="img-small">
+                </div>
+                <p class="card-title">Kết thúc năm 🎆</p>
+                <div class="note-content">Lần đầu tiên không đón năm mới bên gia đình nhưng người đón năm mới cùng mình lại là người mình muốn trở thành gia đình của mình sau này. Mình vẫn bên cạnh người mình thích ở 2024, sang năm 2026 và sẽ còn nhiều năm nữa trong suốt phần đời còn lại.</div>
+            </div>
+             <div class="memory-card" onclick="openModal(this)">
+                <div class="collage-grid">
+                    <img src="daihoc1.jpg" class="img-large" style="object-position: 50% 20%;">
+                    <img src="daihoc2.jpg" class="img-small">
+                    <img src="daihoc3.jpg" class="img-small">
+                </div>
+                <p class="card-title">Tân sinh viên VNU 👨‍🎓👩‍🎓</p>
+                <div class="note-content">Làm sao thể quên được khoảng khắc tụi mình lên một thành phố mới, trở thành tân sinh viên của trường Đại học mình thường mơ ước. Những buổi date dần ít lại do thời gian học tập và khoảng cách nhưng chúng ta vẫn có cách để dành thời gian bên cạnh nhau, chuyển trọ cùng em, những bữa cơm nhà nhẹ nhàng mà đầy ấm cúng, những lúc được nằm cạnh em, chỉ mong sao thời gian trôi chậm lại để những phút giây ấy không biến mất.</div>
+            </div>
+             <div class="memory-card" onclick="openModal(this)">
+                <div class="collage-grid">
+                    <img src="dichoi3.jpg" class="img-large">
+                    <img src="dichoi2.jpg" class="img-small">
+                    <img src="dichoi1.jpg" class="img-small">
+                </div>
+                <p class="card-title">Những chuyến đi chơi 🏍️</p>
+                <div class="note-content">Tuổi 18 bùng nổ với những chuyến đi, vi vu hà nội với Click, food tour Hải Phòng với con Lead. Cũng mệt mệt những cho mình nhiều kỉ niệm đáng nhớ, được thêm thời gian bên người yêu và được khám phá nhiều điều mới mà mình chưa được trải nghiệm.</div>
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <button onclick="nextPage('trang-dau')">Quay lại 🔙</button>
+            <button onclick="nextPage('trang-album')" style="background-color: #ffeb3b; color: #333;">Kỉ niệm 📸</button>
+        </div>
+    </section>
+
+    <section id="trang-album">
+        <div class="curtain-container" id="curtain">
+            <div class="curtain left"></div>
+            <div class="curtain right"></div>
+        </div>
+
+        <h1 style="font-size: 3em; color: #ffeb3b; margin-bottom: 20px; z-index: 2;">Và Còn Rất Nhiều Nữa ...</h1>
+        
+        <div class="wood-board">
+            <div class="lights-container" id="lights"></div>
+            <div class="photo-grid">
+                <div class="film-frame" onclick="openSingleImage(this)"><img src="album1.jpg" alt="1"></div>
+                <div class="film-frame" onclick="openSingleImage(this)"><img src="album2.jpg" alt="2"></div>
+                <div class="film-frame" onclick="openSingleImage(this)"><img src="album3.jpg" alt="3"></div>
+                <div class="film-frame" onclick="openSingleImage(this)"><img src="album4.jpg" alt="4"></div>
+                <div class="film-frame" onclick="openSingleImage(this)"><img src="album5.jpg" alt="5"></div>
+                <div class="film-frame" onclick="openSingleImage(this)"><img src="album6.jpg" alt="6"></div>
+                <div class="film-frame" onclick="openSingleImage(this)"><img src="album7.jpg" alt="7"></div>
+                <div class="film-frame" onclick="openSingleImage(this)"><img src="album8.jpg" alt="8"></div>
+                <div class="film-frame" onclick="openSingleImage(this)"><img src="album9.jpg" alt="9"></div>
+                <div class="film-frame" onclick="openSingleImage(this)"><img src="album10.jpg" alt="10"></div>
+                <div class="film-frame" onclick="openSingleImage(this)"><img src="album11.jpg" alt="11"></div>
+                <div class="film-frame" onclick="openSingleImage(this)"><img src="album12.jpg" alt="12"></div>
+                <div class="film-frame" onclick="openSingleImage(this)"><img src="album13.jpg" alt="13"></div>
+                <div class="film-frame" onclick="openSingleImage(this)"><img src="album14.jpg" alt="14"></div>
+                <div class="film-frame" onclick="openSingleImage(this)"><img src="album15.jpg" alt="15"></div>
+                <div class="film-frame" onclick="openSingleImage(this)"><img src="album16.jpg" alt="16"></div>
+                <div class="film-frame" onclick="openSingleImage(this)"><img src="album17.jpg" alt="17"></div>
+                <div class="film-frame" onclick="openSingleImage(this)"><img src="album18.jpg" alt="18"></div>
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <button onclick="nextPage('trang-ky-niem')">Quay lại 🔙</button>
+            <button onclick="nextPage('trang-nhan-nhu')" style="background-color: #fff; color: #001f3f;">Viết cho em ✍️</button>
+        </div>
+    </section>
+
+    <section id="trang-nhan-nhu">
+        <div class="box">
+            <h1 style="color: #db7093;">Gửi Đến Thùy Anh</h1>
+            <p style="margin: 20px 0; line-height: 1.6;">
+                <p>Xin chào công chúa xinh gái, đến đây cũng là sắp hết hành trình này rồi anh hy vọng rằng em sẽ thích nó, món quà này là dành cho em, cho người con gái tuyệt vời nhất thế giới ♡</p>
+                <p>Dù kỉ niệm 1 năm mình không thể ở bên nhau nhưng anh luôn ở bên cạnh em không chỉ bằng hình hài này mà còn bằng tình yêu và nỗi nhớ của anh. Không chỉ có những kỉ niệm trong chuyến đi này mà còn nhiều những kỉ niệm đáng yêu khác của hai đứa. Anh là chàng trai em gặp năm 17 tuổi, còn em cũng là cô nàng anh mong muốn ở bên tuổi 17, nhiều lúc không hiểu sao mình lại va vào nhau trong cuộc đời giữa hàng tỷ con người trên thế giới này, dẫu sao đó cũng là phần thưởng lớn nhất ông trời cho anh, cho anh được che trở, yêu thương em suốt thời gian vừa qua. Tất cả là những khoảng thời gian hạnh phúc nhất của anh. </p>
+                <p>Em biết đó em là cô gái xinh xắn, em đáng yêu, em tình cảm va phải chàng béo nhưng cũng hơi hơi đẹp zai và tốt bụng như anh thì còn gì tuyệt vời hơn nữa. Nhiều lúc em hỏi anh sao anh chiều em thế hay anh có yêu em không, anh cũng phải tự hỏi chính mình sao em lại ở bên cạnh anh đến tận lúc này, anh yêu em, yêu mọi thứ nơi em! Em buồn anh lo, em dỗi anh dỗ, em đói anh nấu, em mắng anh nghe, em nói yêu anh anh cũng yêu em, ...👸</p>
+                <p>Hết 1 năm bên nhau và còn nhiều năm sau này nữa, mình vẫn bên nhau yêu nhau như này và nếu em đồng ý anh mong sau này em có thể trở thành một phần của anh, ở bên anh đến hết đời này!</p>
+            </p>
+            <div class="btn-group">
+                <button onclick="nextPage('trang-album')">Quay lại 🔙</button>
+                <button onclick="nextPage('trang-ket')" style="background-color: #2c3e50; color: white;">Lời cuối 💌</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="trang-ket">
+        <h1 style="font-size: 3.5em;">365 Ngày Và Nhiều Ngày Nữa!</h1>
+        <h2 style="color: #C71585; margin: 20px 0;">Đức Thành ❤️ Thùy Anh</h2>
+        <div class="btn-group">
+            <button onclick="nextPage('trang-nhan-nhu')">Quay lại 🔙</button>
+            <button onclick="nextPage('trang-dau')" style="background-color: #db7093; color: white;">Kết thúc chuyến đi 🏁</button>
+        </div>
+    </section>
+
+    <div id="imageModal" class="modal" onclick="closeModalOnOutside(event)">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <div class="modal-body">
+                <div class="modal-left">
+                    <div id="modal-img-container" class="collage-grid"></div>
+                    <h3 id="modal-title" class="modal-title-display"></h3>
+                </div>
+                <div class="modal-right">
+                    <p id="modal-note" class="modal-note-display"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function createLights() {
+            const container = document.getElementById('lights');
+            const totalLights = 30; 
+            container.innerHTML = '';
+            for(let i=0; i<totalLights; i++) {
+                const bulb = document.createElement('div');
+                bulb.className = 'light-bulb';
+                let top, left;
+                const pos = i / totalLights;
+                if (pos < 0.25) { top = -5; left = (pos/0.25) * 100 + '%'; } 
+                else if (pos < 0.5) { top = ((pos-0.25)/0.25) * 100 + '%'; left = '100%'; } 
+                else if (pos < 0.75) { top = '100%'; left = (1 - (pos-0.5)/0.25) * 100 + '%'; } 
+                else { top = (1 - (pos-0.75)/0.25) * 100 + '%'; left = '-5px'; }
+                bulb.style.top = top; bulb.style.left = left;
+                bulb.style.animationDelay = Math.random() + 's';
+                bulb.style.backgroundColor = Math.random() > 0.5 ? '#ffeb3b' : '#ff9800'; 
+                container.appendChild(bulb);
+            }
+        }
+
+        function startJourney() {
+            var audio = document.getElementById("bgMusic");
+            if (audio) { audio.play().catch(e => console.log(e)); }
+            nextPage('trang-ky-niem');
+        }
+
+        function nextPage(id) {
+            document.querySelectorAll('section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            window.scrollTo(0,0);
+            if (id === 'trang-album') {
+                const curtainContainer = document.getElementById('curtain');
+                curtainContainer.classList.remove('curtain-open'); 
+                setTimeout(() => { curtainContainer.classList.add('curtain-open'); }, 100);
+                setTimeout(createLights, 500); 
+            }
+        }
+
+        function openModal(element) {
+            const modal = document.getElementById("imageModal");
+            modal.classList.remove('single-view');
+            const imgSrcHTML = element.querySelector('.collage-grid').innerHTML;
+            const titleText = element.querySelector('.card-title').innerText;
+            const noteText = element.querySelector('.note-content').innerText;
+            document.getElementById("modal-img-container").innerHTML = imgSrcHTML;
+            document.getElementById("modal-title").innerText = titleText;
+            document.getElementById("modal-note").innerText = noteText;
+            document.getElementById("modal-note").style.display = "block";
+            modal.style.display = "flex";
+        }
+
+        function openSingleImage(element) {
+            const modal = document.getElementById("imageModal");
+            modal.classList.add('single-view');
+            const imgLink = element.querySelector('img').src;
+            const imgHTML = `<img src="${imgLink}" class="single-img-display">`;
+            document.getElementById("modal-img-container").innerHTML = imgHTML;
+            document.getElementById("modal-title").innerText = "";
+            document.getElementById("modal-note").innerText = "";
+            document.getElementById("modal-note").style.display = "none";
+            modal.style.display = "flex";
+            event.stopPropagation();
+        }
+
+        function closeModal() {
+            const modal = document.getElementById("imageModal");
+            modal.style.display = "none";
+            setTimeout(() => { modal.classList.remove('single-view'); }, 200);
+        }
+
+        function closeModalOnOutside(event) { if (event.target == document.getElementById("imageModal")) closeModal(); }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = '❤️'; 
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = Math.random() * 20 + 10 + 'px';
+            heart.style.animationDuration = Math.random() * 3 + 3 + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => { heart.remove(); }, 6000);
+        }
+        setInterval(createHeart, 300);
+        
+        window.addEventListener('resize', () => {
+             if(document.getElementById('trang-album').classList.contains('active')) { createLights(); }
+        });
+    </script>
+</body>
+</html>
